@@ -1,12 +1,16 @@
 # Build against wheezy for broadest libc compatibility.
-FROM python:2.7-wheezy
+FROM ppc64le/python:2.7
 MAINTAINER Shaun Crampton shaun@tigera.io
 
 ARG UID
 ARG GID
 
 # Install Calico pre-reqs.
-RUN pip install pyinstaller
+#RUN pip install pyinstaller
+RUN git clone https://github.com/pyinstaller/pyinstaller.git
+RUN cd pyinstaller && git checkout v3.2
+RUN cd pyinstaller && cd bootloader && python2.7 ./waf distclean all --no-lsb 
+RUN cd pyinstaller && python2.7 setup.py install
 
 # Install the frozen build requirements.  Use `make update-frozen-reqs` to
 # update these.

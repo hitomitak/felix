@@ -21,6 +21,7 @@ set -x
 set -e
 
 cd /code/
+cp -rf /code/python/calico /usr/local/lib/python2.7/site-packages/PyInstaller-3.2-py2.7.egg/
 
 rm -rf build dist
 pyinstaller docker-build-images/pyi/calico-felix.spec

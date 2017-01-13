@@ -1,17 +1,11 @@
-FROM alpine:3.4
+FROM ppc64le/ubuntu:16.04
 MAINTAINER Tom Denham <tom@projectcalico.org>
 
 # Download and install glibc in one layer
-RUN apk --no-cache add wget ca-certificates libgcc && \
-    wget -q -O /etc/apk/keys/sgerrand.rsa.pub https://raw.githubusercontent.com/sgerrand/alpine-pkg-glibc/master/sgerrand.rsa.pub && \
-    wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.23-r3/glibc-2.23-r3.apk && \
-    wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.23-r3/glibc-bin-2.23-r3.apk && \
-    apk add glibc-2.23-r3.apk glibc-bin-2.23-r3.apk && \
-    /usr/glibc-compat/sbin/ldconfig /lib /usr/glibc/usr/lib && \
-    apk del wget && \
-    rm -f glibc-2.23-r3.apk glibc-bin-2.23-r3.apk
+RUN apt-get update -y
+#RUN apt-get install -y libgcc 
 
-RUN apk --no-cache add ip6tables ipset iputils iproute2 conntrack-tools 
+RUN apt-get install -y iptables ipset iproute2 conntrack
 
 ADD dist/calico-felix /code
 WORKDIR /code

@@ -178,7 +178,7 @@ update-frozen-reqs python/requirements_frozen.txt: python/requirements.txt pytho
 # Build the calico/felix docker image, which contains only Felix.
 .PHONY: calico/felix
 calico/felix: dist/calico-felix/calico-iptables-plugin dist/calico-felix/calico-felix
-	docker build -t calico/felix .
+	docker build -t hitomitak/felix-ppc64le .
 
 # Create or rebuild a python virtualenv suitable for developing Python UTs.
 .PHONY: env
@@ -214,7 +214,7 @@ protobuf: python/calico/felix/felixbackend_pb2.py go/felix/proto/felixbackend.pb
 # Generate the protobuf bindings for go.
 go/felix/proto/felixbackend.pb.go: go/felix/proto/felixbackend.proto
 	$(DOCKER_RUN_RM) -v $${PWD}/go/felix/proto:/src:rw \
-	              calico/protoc \
+	              hitomitak/protoc-ppc64le \
 	              --gogofaster_out=. \
 	              felixbackend.proto
 
@@ -222,7 +222,7 @@ go/felix/proto/felixbackend.pb.go: go/felix/proto/felixbackend.proto
 python/calico/felix/felixbackend_pb2.py: go/felix/proto/felixbackend.proto
 	$(DOCKER_RUN_RM) -v $${PWD}/go/felix/proto:/src:rw \
 	              -v $${PWD}/python/calico/felix/:/dst:rw \
-	              calico/protoc \
+	              hitomitak/protoc-ppc64le \
 	              --python_out=/dst/ \
 	              felixbackend.proto
 

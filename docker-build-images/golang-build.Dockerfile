@@ -1,4 +1,4 @@
-FROM golang:1.7
+FROM ppc64le/golang:1.7.3
 
 MAINTAINER Shaun Crampton <shaun@tigera.io>
 
