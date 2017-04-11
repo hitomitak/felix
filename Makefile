@@ -154,8 +154,9 @@ calico/felix: bin/calico-felix
 # with k8s model resources being injected by a separate test client.
 GET_CONTAINER_IP := docker inspect --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}'
 K8S_VERSION=1.5.3
-.PHONY: k8s-fv-test run-k8s-apiserver stop-k8s-apiserver run-etcd stop-etcd
-k8s-fv-test: calico/felix run-k8s-apiserver k8sfv/k8sfv.test
+GRAFANA_VERSION=4.1.2
+.PHONY: k8sfv-test run-k8s-apiserver stop-k8s-apiserver run-etcd stop-etcd
+k8sfv-test: calico/felix run-k8s-apiserver k8sfv/k8sfv.test
 	@-docker rm -f k8sfv-felix
 	sleep 1
 	K8S_IP=`$(GET_CONTAINER_IP) k8sfv-apiserver` && \
@@ -170,8 +171,9 @@ k8s-fv-test: calico/felix run-k8s-apiserver k8sfv/k8sfv.test
 	calico/felix \
 	/bin/sh -c "for n in 1 2; do calico-felix; done"
 	sleep 1
+	FELIX_IP=`$(GET_CONTAINER_IP) k8sfv-felix` && \
 	K8S_IP=`$(GET_CONTAINER_IP) k8sfv-apiserver` && \
-	docker exec k8sfv-felix /testcode/k8sfv/k8sfv.test -ginkgo.v https://$${K8S_IP}:6443
+	docker exec k8sfv-felix /bin/sh -c "cd /testcode/k8sfv && /testcode/k8sfv/k8sfv.test -ginkgo.v https://$${K8S_IP}:6443 $${FELIX_IP}"
 
 run-k8s-apiserver: stop-k8s-apiserver run-etcd
 	ETCD_IP=`$(GET_CONTAINER_IP) k8sfv-etcd` && \
@@ -220,7 +222,7 @@ run-grafana: stop-grafana run-prometheus
 	docker run --detach --name k8sfv-grafana -p 3000:3000 \
 	-v $${PWD}/$(K8SFV_DIR)/grafana:/etc/grafana \
 	-v $${PWD}/$(K8SFV_DIR)/grafana-dashboards:/etc/grafana-dashboards \
-	grafana/grafana --config /etc/grafana/grafana.ini
+	grafana/grafana:$(GRAFANA_VERSION) --config /etc/grafana/grafana.ini
 	# Wait for it to get going.
 	sleep 5
 	# Configure prometheus data source.
