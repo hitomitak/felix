@@ -14,24 +14,13 @@
 
 package main
 
-import (
-	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
+import "fmt"
 
-	"github.com/projectcalico/felix/k8sfv/leastsquares"
-)
-
-var _ = Context("least squares", func() {
-
-	It("should fit a straight line", func() {
-		p := []leastsquares.Point{
-			{1, 1},
-			{2, 2},
-			{3, 3},
-			{4, 4},
-		}
-		gradient, constant := leastsquares.LeastSquaresMethod(p)
-		Expect(gradient).To(BeNumerically("==", 1))
-		Expect(constant).To(BeNumerically("==", 0))
-	})
-})
+func ipAddrAllocator(pattern string) func() (addr string) {
+	ipNum := 1
+	return func() (addr string) {
+		addr = fmt.Sprintf(pattern, ipNum/255, ipNum%255)
+		ipNum++
+		return
+	}
+}
