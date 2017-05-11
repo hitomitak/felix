@@ -80,7 +80,7 @@ help:
 all: deb rpm calico/felix
 test: ut
 
-GO_BUILD_CONTAINER?=hitomitak/go-build-ppc64le
+GO_BUILD_CONTAINER?=hitomitak/go-build-ppc64le:latest
 
 # Figure out version information.  To support builds from release tarballs, we default to
 # <unknown> if this isn't a git checkout.
